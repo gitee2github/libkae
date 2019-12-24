@@ -1,0 +1,24 @@
+#! /bin/bash
+if [[ $1 == --prefix=* ]]; then
+    prefix=${1#*=}
+elif [[ $1 == "" ]]; then
+    prefix=/usr/local
+else
+    echo "usage: ./configure [--prefix]"
+    exit 1;
+fi
+
+if [ -d $prefix ]; then
+   echo "checking install path... ok"
+else
+   echo "No such file or directory"
+   exit 1;
+fi
+
+grep -n "OPENSSL_WORK_PATH" Makefile > /dev/null
+if [ $? = 0 ]; then
+    sed -i "1d" Makefile
+    sed -i "1i\export OPENSSL_WORK_PATH=$prefix" Makefile
+else
+    sed -i "1i\export OPENSSL_WORK_PATH=$prefix" Makefile
+fi
